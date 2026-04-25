@@ -52,7 +52,7 @@ Please cite either document as:
 > ethrive whitepaper (`<TECHNICAL.md | NON_TECHNICAL.md>`),
 > ethrive contributors, 2026.
 > Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-> https://github.com/p2p-space/ethrive-whitepaper
+> https://github.com/ethrive-io/whitepaper
 
 ## License
 
