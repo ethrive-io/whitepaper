@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 #
-# Release tier — on `vX.Y.Z` tag, package the whitepaper sources.
-# PDF generation (per WS-0005 § "Whitepaper PDF generation") is a
-# follow-up that ports create_pdfs.sh + the Python WeasyPrint +
-# pandoc driver from ethrive-runtime-final/docs/scripts/pdf/.
-# Until then this just ships the source tarball.
+# Release tier — on `vX.Y.Z` tag, render the whitepaper PDFs (via
+# tools/pdf/create_pdfs.py + create_pdfs.sh) and package the source
+# tarball, then publish to GitHub Releases. Each PDF carries the
+# tag-derived version + release date stamped on its cover.
+# See WS-0005 + CI.md.
 name: Release
 
 on:
@@ -23,34 +23,61 @@ concurrency:
 
 jobs:
   package:
-    name: Package whitepaper tarball
+    name: Render PDFs + package source
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 20
     outputs:
       version: ${{ steps.version.outputs.version }}
-      artefact: ${{ steps.pack.outputs.artefact }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - id: version
+        name: Compute version + human date
         run: |
+          set -euo pipefail
           V="$(./tools/compute_version.sh)"
           echo "version=${V}" >> "$GITHUB_OUTPUT"
-      - id: pack
+          # Tag commit's date in "April 2026" form for the cover.
+          if [[ "${GITHUB_REF:-}" =~ ^refs/tags/v ]]; then
+            DATE_HUMAN=$(git log -1 --format=%cd --date=format:'%B %Y' "${GITHUB_REF#refs/tags/}")
+          else
+            DATE_HUMAN=$(date -u '+%B %Y')
+          fi
+          echo "date_human=${DATE_HUMAN}" >> "$GITHUB_OUTPUT"
+          echo "::notice::Stamping PDFs with version=${V}, date=${DATE_HUMAN}"
+
+      - name: Install pandoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc
+
+      - name: Render PDFs (./create_pdfs.sh)
+        env:
+          PDF_VERSION: ${{ steps.version.outputs.version }}
+          PDF_DATE:    ${{ steps.version.outputs.date_human }}
+        run: |
+          mkdir -p artefacts
+          ./create_pdfs.sh artefacts
+
+      - name: Package source tarball + checksums
         run: |
           set -euo pipefail
           V="${{ steps.version.outputs.version }}"
-          ART="ethrive-whitepaper-v${V}-source.tar.gz"
-          tar -czf "$ART" --exclude='./.git' --exclude='./.github' .
-          sha256sum "$ART" > SHA256SUMS
-          echo "artefact=${ART}" >> "$GITHUB_OUTPUT"
+          tar -czf "artefacts/ethrive-whitepaper-v${V}-source.tar.gz" \
+              --exclude='./.git' \
+              --exclude='./.github' \
+              --exclude='./.venv-pdf' \
+              --exclude='./artefacts' \
+              .
+          (cd artefacts && sha256sum ethrive-whitepaper-* > SHA256SUMS)
+          ls -la artefacts/
+
       - uses: actions/upload-artifact@v4
         with:
           name: release-assets
-          path: |
-            ${{ steps.pack.outputs.artefact }}
-            SHA256SUMS
+          path: artefacts/
           if-no-files-found: error
 
   publish:
@@ -66,7 +93,8 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: release-assets
-          path: .
+          path: artefacts/
+
       - name: Assemble release notes
         env:
           TAG: ${{ github.ref_name }}
@@ -76,9 +104,13 @@ jobs:
           {
             echo "ethrive whitepaper **${TAG}**."
             echo
-            echo "Source tarball attached. PDF generation lands in a"
-            echo "follow-up (ports create_pdfs.sh from"
-            echo "ethrive-runtime-final). Provided as-is."
+            echo "Two PDFs attached:"
+            echo "- \`ethrive-whitepaper-${TAG}.pdf\` — technical whitepaper"
+            echo "- \`ethrive-whitepaper-${TAG}-non-technical.pdf\` — plain-language version"
+            echo
+            echo "Each PDF stamps the version + release date on its cover."
+            echo
+            echo "Plus a source tarball and \`SHA256SUMS\`. Provided as-is."
             echo
             if [ -n "$PREV" ]; then
               echo "## Changes since \`${PREV}\`"
@@ -86,14 +118,14 @@ jobs:
               git log --pretty='format:- %s' "${PREV}..${TAG}"
             fi
           } > RELEASE_NOTES.md
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.ref_name }}
-          ART: ${{ needs.package.outputs.artefact }}
         run: |
           set -euo pipefail
           gh release create "$TAG" \
             --title "ethrive-whitepaper ${TAG}" \
             --notes-file RELEASE_NOTES.md \
-            "$ART" SHA256SUMS
+            artefacts/*
