@@ -6,6 +6,13 @@ group, or a program) owns a signed, append-only log of operations
 called a _space_. Spaces replicate between peers and converge
 eventually. No servers. No central authority.
 
+> **⚠️ Experimental software.** ethrive is pre-1.0 and under active
+> development. APIs, wire formats, and on-disk layouts will change
+> without notice, and the protocol has not been independently
+> security-audited. Do not use it with real funds, production data,
+> or anything you can't afford to lose. Provided **as-is**, with no
+> warranties of any kind — see [LICENSE](LICENSE).
+
 Same story, two altitudes. Pick whichever fits the reader in front of
 you:
 
