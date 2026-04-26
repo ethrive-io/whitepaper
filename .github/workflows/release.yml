@@ -1,0 +1,99 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# Release tier — on `vX.Y.Z` tag, package the whitepaper sources.
+# PDF generation (per WS-0005 § "Whitepaper PDF generation") is a
+# follow-up that ports create_pdfs.sh + the Python WeasyPrint +
+# pandoc driver from ethrive-runtime-final/docs/scripts/pdf/.
+# Until then this just ships the source tarball.
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    name: Package whitepaper tarball
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      artefact: ${{ steps.pack.outputs.artefact }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: version
+        run: |
+          V="$(./tools/compute_version.sh)"
+          echo "version=${V}" >> "$GITHUB_OUTPUT"
+      - id: pack
+        run: |
+          set -euo pipefail
+          V="${{ steps.version.outputs.version }}"
+          ART="ethrive-whitepaper-v${V}-source.tar.gz"
+          tar -czf "$ART" --exclude='./.git' --exclude='./.github' .
+          sha256sum "$ART" > SHA256SUMS
+          echo "artefact=${ART}" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-assets
+          path: |
+            ${{ steps.pack.outputs.artefact }}
+            SHA256SUMS
+          if-no-files-found: error
+
+  publish:
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/v')
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-assets
+          path: .
+      - name: Assemble release notes
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          PREV=$(git describe --tags --abbrev=0 --match 'v*' "${TAG}^" 2>/dev/null || true)
+          {
+            echo "ethrive whitepaper **${TAG}**."
+            echo
+            echo "Source tarball attached. PDF generation lands in a"
+            echo "follow-up (ports create_pdfs.sh from"
+            echo "ethrive-runtime-final). Provided as-is."
+            echo
+            if [ -n "$PREV" ]; then
+              echo "## Changes since \`${PREV}\`"
+              echo
+              git log --pretty='format:- %s' "${PREV}..${TAG}"
+            fi
+          } > RELEASE_NOTES.md
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          ART: ${{ needs.package.outputs.artefact }}
+        run: |
+          set -euo pipefail
+          gh release create "$TAG" \
+            --title "ethrive-whitepaper ${TAG}" \
+            --notes-file RELEASE_NOTES.md \
+            "$ART" SHA256SUMS

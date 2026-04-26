@@ -1,0 +1,36 @@
+# SPDX-License-Identifier: Apache-2.0
+name: Nightly
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    uses: ethrive-io/workspace/.github/workflows/reusable-nightly-guard.yml@main
+    with:
+      code-paths: '**/*.md tools/** .github/workflows/**'
+
+  smoke:
+    name: Markdown smoke (nightly)
+    needs: guard
+    if: needs.guard.outputs.has-changes == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          fail=0
+          while IFS= read -r f; do
+            head -1 "$f" >/dev/null 2>&1 || { echo "::error file=$f::not readable"; fail=1; }
+          done < <(find . -name '*.md' -not -path './.git/*')
+          exit $fail

@@ -1,0 +1,45 @@
+# SPDX-License-Identifier: Apache-2.0
+# PR tier — markdown smoke. PDF generation lands in release.yml as
+# a follow-up (per WS-0005 § "Whitepaper PDF generation"; needs the
+# create_pdfs.sh + Python driver port from ethrive-runtime-final).
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    uses: ethrive-io/workspace/.github/workflows/reusable-changes-detect.yml@main
+    with:
+      code-paths: |
+        **/*.md
+        tools/**
+        .github/workflows/**
+
+  no-registry-publish-lint:
+    uses: ethrive-io/workspace/.github/workflows/reusable-no-registry-publish-lint.yml@main
+
+  lint:
+    name: Markdown smoke
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          fail=0
+          while IFS= read -r f; do
+            head -1 "$f" >/dev/null 2>&1 || { echo "::error file=$f::not readable"; fail=1; }
+          done < <(find . -name '*.md' -not -path './.git/*')
+          exit $fail
