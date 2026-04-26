@@ -510,20 +510,24 @@ code {
   font-feature-settings: "tnum";
 }
 
-/* Code blocks */
+/* Code blocks. `white-space: pre-wrap` keeps leading indentation
+   but wraps long lines at whitespace; `overflow-wrap: break-word`
+   is the fallback for tokens longer than the column (e.g. URLs).
+   `overflow: hidden` is gone — it was clipping wide lines mid-string
+   in the rendered PDF. */
 pre {
   font-family: 'JetBrains Mono', 'Source Code Pro', monospace;
-  font-size: 8.2pt;
+  font-size: 7.8pt;
   line-height: 1.45;
   background: #f4f6f8;
   border-left: 2pt solid #1a4380;
   padding: 3mm 4mm;
   margin: 3mm 0 4mm 0;
-  white-space: pre;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
   page-break-inside: avoid;
   color: #1f2937;
   font-feature-settings: "tnum";
-  overflow: hidden;
 }
 pre code {
   background: transparent;
@@ -678,7 +682,7 @@ a { color: #1a1d21; text-decoration: none; }
 
 code.sourceCode, pre.sourceCode, pre.sourceCode code {
   font-family: 'JetBrains Mono', 'Source Code Pro', Menlo, monospace;
-  font-size: 8.2pt;
+  font-size: 7.8pt;
   line-height: 1.45;
   color: #1f2937;
 }
@@ -688,7 +692,11 @@ pre.sourceCode {
   padding: 3mm 4mm;
   margin: 3mm 0 4mm 0;
   page-break-inside: avoid;
-  white-space: pre;
+  /* Same wrap rules as the bare `pre` block above — long
+     syntax-highlighted lines were being clipped at the page
+     edge in the rendered PDF. */
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
   font-feature-settings: "tnum";
 }
 /* Skylighting emits spans like <span class="kw"> — we style the common
