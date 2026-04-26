@@ -1,3 +1,5 @@
 .venv-pdf/
 .build/
 /tmp-pdfs/
+__pycache__/
+*.pyc
