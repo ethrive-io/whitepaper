@@ -707,25 +707,28 @@ def non_technical_whitepaper_config(out_dir: Path) -> BuildConfig:
         out_html=out_dir / '.build' / 'NON_TECHNICAL.html',
         svg_cache_dir=out_dir / '.build' / 'whitepaper-non-technical-svgs',
         cover_mark='ethrive',
-        cover_title_html='A Plain-Language<br>Introduction',
-        cover_subtitle='What ethrive is, what it changes, and why it '
-                       'matters — without the protocol jargon. Written '
-                       'for anyone who has ever wondered where their '
-                       'photos, messages, and notes actually live.',
-        cover_tagline='Your data, on your devices and the devices of '
-                      'people you trust. Apps as lenses, not vaults. '
-                      'No central server in the middle.',
+        cover_title_html='Whitepaper',
+        cover_subtitle='Your data, on your devices and the devices of '
+                       'people you trust.',
+        cover_tagline='No central server in the middle.',
         cover_meta_html=_meta_html('Plain-Language Edition'),
         title_main='ethrive',
-        title_sub='A Plain-Language Introduction',
-        title_tagline='A short, jargon-free walk through how ethrive '
-                      'works and why it matters — for journalists, '
-                      'business readers, families, and anyone who uses '
-                      'cloud software without thinking about who owns '
-                      'their data. Read it cover to cover in twenty '
-                      'minutes.',
+        title_sub='Whitepaper · Plain-Language Edition',
+        title_tagline='ethrive is a way to build apps without a '
+                      'company in the middle. Your photos, messages, '
+                      'and notes live on your devices and the devices '
+                      'of the people you share them with — never on '
+                      'someone else’s server. The apps you use '
+                      'become lenses on top of that data, not vaults '
+                      'that hold it. This is the plain-language '
+                      'introduction: what ethrive is, what it changes, '
+                      'and why it matters — without the protocol '
+                      'jargon. Twenty minutes, cover to cover. For '
+                      'journalists, business readers, families, and '
+                      'anyone who uses cloud software without '
+                      'thinking about who owns their data.',
         title_colophon_html=_colophon_html('Everyone'),
-        doc_title='ethrive — A Plain-Language Introduction',
+        doc_title='ethrive Whitepaper · Plain-Language Edition',
         hide_h1_regex=(
             r'<header[^>]*id="title-block-header".*?</header>'
             r'|<h1[^>]*>\s*ethrive\s*</h1>'
@@ -745,24 +748,32 @@ def whitepaper_config(out_dir: Path) -> BuildConfig:
         svg_cache_dir=out_dir / '.build' / 'whitepaper-svgs',
         cover_mark='ethrive',
         cover_title_html='Whitepaper',
-        cover_subtitle='A peer-to-peer protocol where every participant — '
-                       'a person, a device, a group, a program — is identified '
-                       'by a public key and owns a signed, append-only log '
-                       'called a space.',
-        cover_tagline='One primitive. Three modes of authority. '
-                      'One extension point.',
+        cover_subtitle='A peer-to-peer protocol where every '
+                       'participant owns a signed, append-only log.',
+        cover_tagline='No servers. No central authority.',
         cover_meta_html=_meta_html('Whitepaper'),
         title_main='ethrive',
         title_sub='Whitepaper',
-        title_tagline='A conceptual introduction for a technical audience: '
-                      'what ethrive is, what it makes possible, and how '
-                      'sovereign spaces, threshold signing, and a single '
-                      'extension point combine into a substrate for the '
-                      'next generation of decentralized applications.',
+        title_tagline='ethrive is a peer-to-peer protocol. Every '
+                      'participant — a person, a device, a group, a '
+                      'program — is identified by a public key and '
+                      'owns a signed, append-only log of operations '
+                      'called a *space*. Spaces replicate between '
+                      'members and converge eventually. There are no '
+                      'servers and no central authority; any peer '
+                      'with the relevant membership can read, and '
+                      'any peer with the relevant signing authority '
+                      'can author. This whitepaper is a conceptual '
+                      'introduction for a technical audience: what '
+                      'ethrive makes possible, how sovereign spaces '
+                      'and threshold signing combine into a '
+                      'substrate for the next generation of '
+                      'decentralized applications, and the single '
+                      'extension point that holds it all together.',
         title_colophon_html=_colophon_html(
             'Technical readers · Researchers · Partners · Sophisticated end users'
         ),
-        doc_title='ethrive — Whitepaper',
+        doc_title='ethrive Whitepaper',
         hide_h1_regex=(
             r'<header[^>]*id="title-block-header".*?</header>'
             r'|<h1[^>]*>\s*ethrive\s*</h1>'
