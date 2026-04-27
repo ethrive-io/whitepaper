@@ -25,10 +25,10 @@ start here.
 Same story, two altitudes. Pick whichever fits the reader in front of
 you:
 
-| | Audience | Length | Tone | Audio |
-| --- | --- | --- | --- | :-- |
-| **[TECHNICAL.md](TECHNICAL.md)** | engineers, protocol implementers, architects | ~7,300 words / ~35 min read | formal, cites prior art, covers the protocol's structure and security model | [🎧 Listen](https://ethrive-io.github.io/whitepaper/WHITEPAPER.mp3) |
-| **[NON_TECHNICAL.md](NON_TECHNICAL.md)** | everyone else | ~4,100 words / ~20 min read | plain language, no jargon, no code, starts from "where are your photos, really?" | [🎧 Listen](https://ethrive-io.github.io/whitepaper/WHITEPAPER_NON_TECHNICAL.mp3) |
+| | Audience | Tone | Audio |
+| --- | --- | --- | :-- |
+| **[TECHNICAL.md](TECHNICAL.md)** | engineers, protocol implementers, architects | formal, cites prior art, covers the protocol's structure and security model | [🎧 Listen](https://ethrive-io.github.io/whitepaper/WHITEPAPER.mp3) |
+| **[NON_TECHNICAL.md](NON_TECHNICAL.md)** | everyone else | plain language, no jargon, no code, starts from "where are your photos, really?" | [🎧 Listen](https://ethrive-io.github.io/whitepaper/WHITEPAPER_NON_TECHNICAL.mp3) |
 
 Both documents stand on their own. Readers new to distributed systems
 should start with the non-technical version; readers who want to
