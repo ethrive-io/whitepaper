@@ -13,15 +13,15 @@ eventually. No servers. No central authority.
 > or anything you can't afford to lose. Provided **as-is**, with no
 > warranties of any kind — see [LICENSE](LICENSE).
 
-> 🎙️ Prefer to listen first? **[Evicting digital landlords with ethrive](https://ethrive-io.github.io/whitepaper/Evicting_digital_landlords_with_ethrive.mp3)** (54 min) is a podcast-style conversation about the protocol generated with Google NotebookLM — recommended if you want the *why* before the *how*.
+> 🎙️ Prefer to listen first? **[Evicting digital landlords with ethrive](https://ethrive-io.github.io/whitepaper/Evicting_digital_landlords_with_ethrive.mp3)** (54 min) — a podcast-style conversation about the protocol, generated with Google NotebookLM.
 
 Same story, two altitudes. Pick whichever fits the reader in front of
 you:
 
 | | Audience | Length | Tone | Audio |
-| --- | --- | --- | --- | --- |
-| **[TECHNICAL.md](TECHNICAL.md)** | engineers, protocol implementers, architects | ~7,300 words / ~35 min read | formal, cites prior art, covers the protocol's structure and security model | [🎧 54 min](https://ethrive-io.github.io/whitepaper/WHITEPAPER.mp3) |
-| **[NON_TECHNICAL.md](NON_TECHNICAL.md)** | everyone else | ~4,100 words / ~20 min read | plain language, no jargon, no code, starts from "where are your photos, really?" | [🎧 25 min](https://ethrive-io.github.io/whitepaper/WHITEPAPER_NON_TECHNICAL.mp3) |
+| --- | --- | --- | --- | :-- |
+| **[TECHNICAL.md](TECHNICAL.md)** | engineers, protocol implementers, architects | ~7,300 words / ~35 min read | formal, cites prior art, covers the protocol's structure and security model | [🎧&nbsp;54&nbsp;min](https://ethrive-io.github.io/whitepaper/WHITEPAPER.mp3) |
+| **[NON_TECHNICAL.md](NON_TECHNICAL.md)** | everyone else | ~4,100 words / ~20 min read | plain language, no jargon, no code, starts from "where are your photos, really?" | [🎧&nbsp;25&nbsp;min](https://ethrive-io.github.io/whitepaper/WHITEPAPER_NON_TECHNICAL.mp3) |
 
 Both documents stand on their own. Readers new to distributed systems
 should start with the non-technical version; readers who want to
