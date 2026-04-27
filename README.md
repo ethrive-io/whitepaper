@@ -27,6 +27,28 @@ implement ethrive or evaluate it as a protocol should read the
 technical one. Reading both is ~55 minutes and gives you the most
 complete picture.
 
+## Listen
+
+Audio versions of both whitepapers, plus a podcast-style conversation
+about the protocol generated with Google NotebookLM. GitHub renders
+each `<video>` tag below as an inline play bar.
+
+> Evicting digital landlords with ethrive — a NotebookLM-generated
+> conversational tour of the project. Good first listen if you want
+> the why before the how.
+
+<video src="https://ethrive-io.github.io/whitepaper/Evicting_digital_landlords_with_ethrive.mp3" controls preload="none" style="width: 100%; max-width: 600px;"></video>
+
+> Non-technical whitepaper read aloud (~20 min). Same plain-language
+> document as `NON_TECHNICAL.md`.
+
+<video src="https://ethrive-io.github.io/whitepaper/WHITEPAPER_NON_TECHNICAL.mp3" controls preload="none" style="width: 100%; max-width: 600px;"></video>
+
+> Technical whitepaper read aloud (~35 min). Same document as
+> `TECHNICAL.md`.
+
+<video src="https://ethrive-io.github.io/whitepaper/WHITEPAPER.mp3" controls preload="none" style="width: 100%; max-width: 600px;"></video>
+
 ## What ethrive is, in one paragraph
 
 A _space_ is a signed, append-only log of operations, owned and
