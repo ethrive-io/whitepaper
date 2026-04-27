@@ -27,8 +27,8 @@ you:
 
 | | Audience | Tone |
 | --- | --- | --- |
-| **[TECHNICAL.md](TECHNICAL.md)**<br>[🎧 Audio version](https://ethrive-io.github.io/whitepaper/WHITEPAPER.mp3) | engineers, protocol implementers, architects | formal, cites prior art, covers the protocol's structure and security model |
-| **[NON_TECHNICAL.md](NON_TECHNICAL.md)**<br>[🎧 Audio version](https://ethrive-io.github.io/whitepaper/WHITEPAPER_NON_TECHNICAL.mp3) | everyone else | plain language, no jargon, no code, starts from "where are your photos, really?" |
+| **[TECHNICAL.md](TECHNICAL.md)**<br>[🎧 Audio version](https://ethrive-io.github.io/whitepaper/WHITEPAPER.mp3) | engineers, protocol implementers, architects | formal academic style; covers wire format, sync, authority modes (incl. threshold signing), and the handler extension model; cites prior art (Matrix, Scuttlebutt, IPFS, blockchains) |
+| **[NON_TECHNICAL.md](NON_TECHNICAL.md)**<br>[🎧 Audio version](https://ethrive-io.github.io/whitepaper/WHITEPAPER_NON_TECHNICAL.mp3) | everyone else | plain language, leans on everyday analogies (apartments, shared notebooks); opens with "where are your photos, really?"; includes a frank trade-offs section |
 
 Both documents stand on their own. Readers new to distributed systems
 should start with the non-technical version; readers who want to
