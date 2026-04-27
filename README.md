@@ -55,11 +55,13 @@ categories that earlier systems treat as unrelated problems.
 ## Status
 
 These documents are the **living whitepaper** for the ethrive
-protocol. They describe the design intent; the normative protocol
-specification lives in a separate repository
-(`ethrive-spec` — coming online alongside this one). If the
-whitepaper and the spec ever disagree, the spec wins — the whitepaper
-is an invitation, not a contract.
+protocol — they describe the design intent. The normative protocol
+specification lives in a separate repository at
+[ethrive-io/specs](https://github.com/ethrive-io/specs) and will be
+released **very soon**; we are still thoroughly testing it before
+cutting the first version. If the whitepaper and the spec ever
+disagree, the spec wins — the whitepaper is an invitation, not a
+contract.
 
 ## Citing
 
