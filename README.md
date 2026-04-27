@@ -29,25 +29,15 @@ complete picture.
 
 ## Listen
 
-Audio versions of both whitepapers, plus a podcast-style conversation
-about the protocol generated with Google NotebookLM. GitHub renders
-each `<video>` tag below as an inline play bar.
+Audio companions to both whitepapers, plus a podcast-style
+conversation about the protocol generated with Google NotebookLM.
+Click any link below to play in your browser.
 
-> Evicting digital landlords with ethrive — a NotebookLM-generated
-> conversational tour of the project. Good first listen if you want
-> the why before the how.
-
-<video src="https://ethrive-io.github.io/whitepaper/Evicting_digital_landlords_with_ethrive.mp3" controls preload="none" style="width: 100%; max-width: 600px;"></video>
-
-> Non-technical whitepaper read aloud (~20 min). Same plain-language
-> document as `NON_TECHNICAL.md`.
-
-<video src="https://ethrive-io.github.io/whitepaper/WHITEPAPER_NON_TECHNICAL.mp3" controls preload="none" style="width: 100%; max-width: 600px;"></video>
-
-> Technical whitepaper read aloud (~35 min). Same document as
-> `TECHNICAL.md`.
-
-<video src="https://ethrive-io.github.io/whitepaper/WHITEPAPER.mp3" controls preload="none" style="width: 100%; max-width: 600px;"></video>
+| | Audio | Length |
+| --- | --- | --- |
+| 🎙️ | [**Evicting digital landlords with ethrive**](https://ethrive-io.github.io/whitepaper/Evicting_digital_landlords_with_ethrive.mp3) — NotebookLM-generated conversational tour. Good first listen if you want the *why* before the *how*. | ~15 min |
+| 🔊 | [**Non-technical whitepaper, read aloud**](https://ethrive-io.github.io/whitepaper/WHITEPAPER_NON_TECHNICAL.mp3) — same plain-language document as [`NON_TECHNICAL.md`](NON_TECHNICAL.md). | ~20 min |
+| 🔊 | [**Technical whitepaper, read aloud**](https://ethrive-io.github.io/whitepaper/WHITEPAPER.mp3) — same document as [`TECHNICAL.md`](TECHNICAL.md). | ~35 min |
 
 ## What ethrive is, in one paragraph
 
