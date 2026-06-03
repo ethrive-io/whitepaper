@@ -1,4 +1,12 @@
 # SPDX-License-Identifier: Apache-2.0
+# Nightly tier — re-runs the markdown smoke, skipping when nothing
+# changed in the last ~25h.
+#
+# whitepaper is the org's ONLY public repo. GitHub blocks a public repo
+# from calling a private repo's reusable workflow, so this nightly CANNOT
+# use ethrive-io/workspace's reusable-nightly-guard (which every private
+# SDK repo uses). The 25h guard is therefore inlined below — same intent,
+# self-contained.
 name: Nightly
 
 on:
@@ -17,20 +25,49 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
-  guard:
-    uses: ethrive-io/workspace/.github/workflows/reusable-nightly-guard.yml@main
-    with:
-      code-paths: '**/*.md tools/** .github/workflows/**'
-
   smoke:
     name: Markdown smoke (nightly)
-    needs: guard
-    if: needs.guard.outputs.has-changes == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - run: |
+        with:
+          fetch-depth: 0
+
+      # Inlined 25h guard (cf. workspace reusable-nightly-guard): skip the
+      # smoke unless a watched path changed in the last 25h, so an idle
+      # docs repo's nightly finishes in seconds. workflow_dispatch bypasses.
+      - id: guard
+        env:
+          CODE_PATHS: "**/*.md tools/** .github/workflows/**"
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::workflow_dispatch — bypassing the 25h guard."
+            exit 0
+          fi
+          # shellcheck disable=SC2086 # intentional: split CODE_PATHS into a pathspec array
+          read -r -a paths <<< "$CODE_PATHS"
+          last_ts=$(git log -1 --pretty=format:%ct -- "${paths[@]}" || true)
+          if [ -z "$last_ts" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::no commit ever touched the watched paths — skipping."
+            exit 0
+          fi
+          now=$(date -u +%s)
+          age_h=$(( (now - last_ts) / 3600 ))
+          echo "last change to watched paths: ${age_h}h ago (paths: ${paths[*]})"
+          if [ "$age_h" -le 25 ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::no change in the last 25h — skipping the nightly smoke."
+          fi
+
+      - name: Markdown smoke
+        if: steps.guard.outputs.run == 'true'
+        run: |
           set -euo pipefail
           fail=0
           while IFS= read -r f; do

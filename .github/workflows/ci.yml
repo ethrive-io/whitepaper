@@ -1,7 +1,13 @@
 # SPDX-License-Identifier: Apache-2.0
 # PR tier — markdown smoke. PDF generation lands in release.yml as
-# a follow-up (per WS-0005 § "Whitepaper PDF generation"; needs the
-# create_pdfs.sh + Python driver port from ethrive-runtime-final).
+# a follow-up (per WS-0005 § "Whitepaper PDF generation").
+#
+# whitepaper is the org's ONLY public repo, so it CANNOT call the private
+# ethrive-io/workspace reusable workflows (GitHub blocks public->private
+# reusable calls). The shared changes-detect path-filter + the
+# no-registry-publish-lint don't apply to a docs repo anyway (no build,
+# nothing published to a package registry), so the cheap markdown smoke
+# just runs self-contained here.
 name: CI
 
 on:
@@ -20,21 +26,8 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
-  changes:
-    uses: ethrive-io/workspace/.github/workflows/reusable-changes-detect.yml@main
-    with:
-      code-paths: |
-        **/*.md
-        tools/**
-        .github/workflows/**
-
-  no-registry-publish-lint:
-    uses: ethrive-io/workspace/.github/workflows/reusable-no-registry-publish-lint.yml@main
-
   lint:
     name: Markdown smoke
-    needs: changes
-    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
