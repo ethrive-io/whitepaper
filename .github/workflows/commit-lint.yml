@@ -1,0 +1,126 @@
+name: commit-lint
+
+# Fails when a commit subject is not a Conventional Commit, because
+# release-please SILENTLY DROPS what it cannot parse.
+#
+# WHY A GATE AND NOT A CONVENTION. release-please builds CHANGELOG.md and
+# computes the next version by parsing commit subjects. A subject it cannot
+# parse is not an error — it is skipped. So a malformed subject means a real
+# change ships with no changelog entry and no version bump, and nothing goes red
+# anywhere. Without this gate a broken changelog looks exactly like a correct
+# one.
+#
+# THE TRAP THIS ECOSYSTEM ACTUALLY FALLS INTO is using the DOMAIN as the TYPE —
+# `spec:`, `vectors:`, `sdk-shape:`, `shape:`, `widgets:`, `core:`, `status:`,
+# `parity:`. Those are scopes, not types. Measured at adoption: 106 commits in
+# the specs repo were `spec(scope): …` and that repo sat at ~11% conformance,
+# while dart, which uses real types, sat at 98% over its last 50.
+#
+# WHY SELF-CONTAINED AND NOT A REUSABLE WORKFLOW. The org DOES have reusable
+# workflows in `ethrive-io/.github`, but at adoption they had ZERO consumers and
+# the repo carried no `v1` tag — so the documented `@v1` reference would have
+# failed on first run. A gate whose own plumbing is unverified is not a gate.
+# This file therefore depends on nothing outside the repo it lives in.
+#
+# WHY IT RUNS ON PUSH. This ecosystem pushes directly to main, so there is
+# usually no pull request to block. On push this is an after-the-fact signal by
+# design: it cannot stop a bad subject landing, only stop one landing UNNOTICED,
+# which is the real failure mode. An already-pushed subject cannot be repaired
+# (force-push is forbidden, invariant #5) — that changelog entry is simply lost.
+# Amend before pushing.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  commit-lint:
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # A shallow clone makes the pushed range unresolvable, and the gate
+          # would then check NOTHING while still reporting success — the exact
+          # defect it exists to prevent.
+          fetch-depth: 0
+
+      - name: Resolve the range that actually landed
+        id: range
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            range="${{ github.event.pull_request.base.sha }}..${{ github.sha }}"
+          elif [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            # Branch creation: no previous ref. Check the tip only — the full
+            # history predates this convention and is not repairable anyway.
+            range="HEAD~1..HEAD"
+          else
+            range="${{ github.event.before }}..${{ github.sha }}"
+          fi
+          echo "range=${range}" >> "$GITHUB_OUTPUT"
+          echo "checking ${range}"
+
+      - name: Check commit subjects
+        env:
+          RANGE: ${{ steps.range.outputs.range }}
+        run: |
+          set -euo pipefail
+          RE='^(feat|fix|docs|chore|ci|test|refactor|perf|build|style|revert)(\([a-z0-9._,/ -]+\))?!?: .+'
+          # git generates merge subjects and no human authors them; release-please
+          # understands reverts natively. Exempt both.
+          MERGE_RE='^(Merge |Revert ")'
+
+          fail=0; checked=0; skipped=0
+          while IFS=$'\t' read -r sha subject; do
+            [ -z "${sha}" ] && continue
+            if printf '%s' "${subject}" | grep -qE "${MERGE_RE}"; then
+              skipped=$((skipped + 1)); continue
+            fi
+            checked=$((checked + 1))
+            if ! printf '%s' "${subject}" | grep -qE "${RE}"; then
+              if [ "${fail}" -eq 0 ]; then
+                echo "::error::Commit subjects below are not Conventional Commits."
+                echo "release-please will SILENTLY OMIT them from CHANGELOG.md and"
+                echo "they will not bump the version."
+                echo
+              fi
+              printf '  %s  %s\n' "${sha}" "${subject}"
+              fail=$((fail + 1))
+            fi
+          done < <(git log --no-merges --format='%h%x09%s' "${RANGE}")
+
+          if [ "${fail}" -gt 0 ]; then
+            # printf, not a heredoc: inside a YAML block scalar the body is
+            # dedented, so a heredoc terminator would not land at column 0 and
+            # would never close.
+            printf '\n%s\n' \
+              'Format:  <type>[(scope)][!]: <subject>' \
+              '  a trailing ! (or a BREAKING CHANGE: footer) marks a breaking change' \
+              '' \
+              'Most failures are the domain used as the type. Move it into the' \
+              'scope and pick a real type:' \
+              '' \
+              '  spec: add the AEL query        ->  docs(spec): add the AEL query' \
+              '  vectors: regenerate the window ->  feat(vectors): regenerate the window' \
+              '  status: regenerate the rollup  ->  chore(status): regenerate the rollup' \
+              '' \
+              'Fix an UNPUSHED commit with: git commit --amend' \
+              'An already-pushed one cannot be fixed (force-push is forbidden);' \
+              'that changelog entry is simply lost.'
+          fi
+
+          # The work-count contract: a run that checked nothing must be visible
+          # rather than green.
+          echo "GATE: commit_messages checked=${checked} required=${checked} skipped=${skipped} filtered=0 total_on_disk=$((checked + skipped))"
+          if [ "${checked}" -eq 0 ] && [ "${skipped}" -eq 0 ]; then
+            echo "::warning::range ${RANGE} contained no commits to check"
+          fi
+          [ "${fail}" -eq 0 ] || exit 1
+          echo "OK: ${checked} subject(s) conform (${skipped} merge/revert exempt)."
