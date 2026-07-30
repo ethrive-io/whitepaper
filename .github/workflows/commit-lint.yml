@@ -77,10 +77,17 @@ jobs:
           # understands reverts natively. Exempt both.
           MERGE_RE='^(Merge |Revert ")'
 
+          # Pre-gate history is unrepairable (already pushed; force-push forbidden),
+          # so a commit that is an ancestor of the commit which INTRODUCED this gate
+          # is exempt. Otherwise CI is permanently red for a defect nobody can fix.
+          BOOTSTRAP="$(git log --diff-filter=A --format=%H -- .github/workflows/commit-lint.yml 2>/dev/null | tail -1)"
           fail=0; checked=0; skipped=0
           while IFS=$'\t' read -r sha subject; do
             [ -z "${sha}" ] && continue
             if printf '%s' "${subject}" | grep -qE "${MERGE_RE}"; then
+              skipped=$((skipped + 1)); continue
+            fi
+            if [ -n "${BOOTSTRAP}" ] && git merge-base --is-ancestor "${sha}" "${BOOTSTRAP}" 2>/dev/null; then
               skipped=$((skipped + 1)); continue
             fi
             checked=$((checked + 1))
