@@ -28,6 +28,10 @@
       "section": "Documentation"
     },
     {
+      "type": "adr",
+      "section": "Architecture Decisions"
+    },
+    {
       "type": "test",
       "section": "Tests"
     },
