@@ -1,0 +1,81 @@
+name: release-please
+
+# Release management for the whole ecosystem is release-please (ADR pending).
+#
+# HOW A RELEASE HAPPENS NOW. You do not tag by hand any more. Land conventional
+# commits on `main`; release-please keeps ONE open "chore(main): release X.Y.Z"
+# pull request whose body is the changelog it has accumulated. Merging that PR
+# is the release: it writes CHANGELOG.md, bumps `version.txt`, creates the
+# `vX.Y.Z` tag and publishes the GitHub Release.
+#
+# WHY THE EXISTING release.yml STILL EXISTS. It triggers on a `vX.Y.Z` tag push,
+# which is exactly what merging the release PR produces. So the two compose:
+# release-please decides WHEN and WHAT VERSION, the existing workflow builds and
+# attaches the artefacts. Neither one had to be deleted for the other to work.
+#
+# THE VERSION IS THE TAG. No SDK publishes to a language registry (npm, crates,
+# pub, PyPI, Maven) — release artefacts go to GitHub Releases only — so a
+# version field inside pubspec.yaml / Cargo.toml / package.json is decorative.
+# That is why every repo in this ecosystem uses the `simple` release-type and
+# tracks its version in `version.txt`, rather than each one needing a different
+# language-specific strategy.
+#
+# DCO. Every commit in this org must carry `Signed-off-by` and a reusable
+# workflow enforces it on pull requests. A bot-authored release PR is still a
+# pull request, so `signoff` is set in release-please-config.json — without it
+# every release PR would be blocked by the DCO gate.
+#
+# ── THE PRE-v1 POLICY (two flags in release-please-config.json) ──────────────
+#
+#   "bump-minor-pre-major": true
+#       While the major is 0, a BREAKING change (`feat!:` or a `BREAKING
+#       CHANGE:` footer) bumps the MINOR, not the major. 0.1.0 -> 0.2.0, never
+#       -> 1.0.0. This is the "we are pre-v1" switch: it makes it impossible to
+#       reach 1.0.0 by accident, which matters here because invariant #9 makes
+#       breaking changes ROUTINE — the wire is `1.0.0-draft.N`, there are no
+#       users, and we delete rather than deprecate. Without this flag the first
+#       `feat!:` would silently ship 1.0.0 and make wire additivity load-bearing.
+#
+#   "bump-patch-for-minor-pre-major": true
+#       While the major is 0, a plain `feat:` bumps the PATCH, not the minor.
+#       Combined with the flag above the pre-v1 ladder reads:
+#           fix:    -> patch   (0.1.0 -> 0.1.1)
+#           feat:   -> patch   (0.1.0 -> 0.1.1)
+#           feat!:  -> minor   (0.1.0 -> 0.2.0)
+#       So the minor digit means exactly one thing before v1: SOMETHING BROKE.
+#       That is the signal worth having in a corpus where breakage is expected
+#       and features are constant.
+#
+#   CUTTING v1.0.0 is therefore a deliberate act, not a drift: set both flags to
+#   false (or `release-as: "1.0.0"` once). That is the same explicit decision
+#   the workspace CLAUDE.md already describes as flipping invariant #9.
+#
+# ── BOOTSTRAP: `release-as` IS TEMPORARY ────────────────────────────────────
+#
+# `release-as: "0.1.0"` in the config forces the FIRST release to be exactly
+# v0.1.0 rather than the 0.0.1 the commit history would otherwise compute.
+# It is STICKY — left in place it pins EVERY future release to 0.1.0. REMOVE IT
+# from release-please-config.json immediately after v0.1.0 is published.
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# A second push while a release PR is being reconciled would race it.
+concurrency:
+  group: release-please-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
