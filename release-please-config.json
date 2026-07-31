@@ -63,5 +63,6 @@
   "pull-request-title-pattern": "Release v${version}",
   "pull-request-header": "This pull request was prepared by [release-please](https://github.com/googleapis/release-please). Merging it publishes the release described below: it writes `CHANGELOG.md`, updates the version manifest, creates the `vX.Y.Z` tag and publishes the GitHub Release.",
   "pull-request-footer": "Release prepared automatically from the Conventional Commits landed on `main`.",
-  "bootstrap-sha": "09dcf18a0b58aa1c4c0de9823a92a25ca48f63c3"
+  "bootstrap-sha": "09dcf18a0b58aa1c4c0de9823a92a25ca48f63c3",
+  "group-pull-request-title-pattern": "Release v${version}"
 }
