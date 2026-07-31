@@ -192,7 +192,7 @@ The trade-off ethrive makes is to refuse the convenience of a central authority,
 
 The protocol is open. The specification is complete. The wire format is byte-identical across implementations. There is no privileged client, no foundation that owns a reference, no permission needed to participate. An implementer in any language who passes the conformance vectors is, by construction, a first-class participant in the network.
 
-For those who want the full normative specification, it lives alongside this paper in the `specs/` directory: `PRIMER.md` for the fifteen-minute orientation, `CORE.md` for the complete protocol, `ARCHITECTURE.md` for the static shape of one runtime, `SYNC.md` for the dynamic behaviour across multiple peers, the modules under `modules/` for each handler, and `EXAMPLES.md` for thirteen worked end-to-end scenarios. For those who would rather build than read, it is sufficient to know that the wire format is signed JSON operations, that the sync protocol is a vector-clock diff, and that your first handler is one short class implementing two methods.
+For those who want the full normative specification, it lives alongside this paper in the `specs/` directory: `primer.md` for the fifteen-minute orientation, `core.md` for the complete protocol, `architecture.md` for the static shape of one runtime, `sync.md` for the dynamic behaviour across multiple peers, the modules under `modules/` for each handler, and `examples.md` for thirteen worked end-to-end scenarios. For those who would rather build than read, it is sufficient to know that the wire format is signed JSON operations, that the sync protocol is a vector-clock diff, and that your first handler is one short class implementing two methods.
 
 Welcome aboard.
 
@@ -200,7 +200,7 @@ Welcome aboard.
 
 ### Glossary
 
-A compact selection of terms used in this paper. Full definitions for every term in the protocol live in `specs/GLOSSARY.md`.
+A compact selection of terms used in this paper. Full definitions for every term in the protocol live in `specs/glossary.md`.
 
 **Principal** — anything addressable by a public key (a member, a space, an application install, a device).
 

@@ -5,7 +5,7 @@ Build a PDF for every ethrive spec Markdown file.
 Layout:
   WHITEPAPER.md             — non-implementer front-door whitepaper.
   WHITEPAPER_NON_TECHNICAL.md — plain-language introduction for non-technical readers.
-  specs/CORE.md             — core protocol (includes every subsystem).
+  specs/core.md             — core protocol (includes every subsystem).
   specs/<OTHER>.md          — standalone companion docs (PRIMER,
                               ARCHITECTURE, GLOSSARY, SYNC, DECISIONS,
                               EXAMPLES, ROSETTA_STONE, BUILDING_PEERS,
