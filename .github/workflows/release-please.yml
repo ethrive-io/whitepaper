@@ -61,6 +61,13 @@ on:
   push:
     branches:
       - main
+  # Manual trigger. release-please recomputes the release from the whole commit
+  # history on every run, so firing this by hand is always safe and idempotent —
+  # it updates the open release PR rather than creating a second one. Needed
+  # because a push is otherwise the ONLY trigger, so regenerating a PR (e.g.
+  # after a config change that only takes effect at PR-creation time, like
+  # pull-request-title-pattern) would otherwise require a dummy commit.
+  workflow_dispatch:
 
 permissions:
   contents: write
