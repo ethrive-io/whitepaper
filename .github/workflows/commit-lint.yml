@@ -74,9 +74,9 @@ jobs:
           set -euo pipefail
           RE='^(feat|fix|docs|chore|ci|test|refactor|perf|build|style|revert|adr)(\([A-Za-z0-9._,/ -]+\))?!?: .+'
           # git generates merge subjects and no human authors them; release-please
-# authors 'Release vX.Y.Z' the same way (it is the release PR's title, which
-# becomes the squash subject).
-          # understands reverts natively. Exempt both.
+          # authors 'Release vX.Y.Z' the same way (it is the release PR's title,
+          # which becomes the squash subject). release-please parses none of them.
+          # Exempt all three.
           MERGE_RE='^(Merge |Revert "|Release v[0-9])'
 
           # Pre-gate history is unrepairable (already pushed; force-push forbidden),
