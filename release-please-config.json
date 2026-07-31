@@ -5,6 +5,9 @@
   "separate-pull-requests": false,
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
+  "versioning": "prerelease",
+  "prerelease": true,
+  "prerelease-type": "rc",
   "signoff": "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
   "changelog-sections": [
     {
@@ -57,7 +60,7 @@
   "packages": {
     ".": {
       "package-name": "ethrive-whitepaper",
-      "release-as": "0.1.0"
+      "initial-version": "0.1.0-rc1"
     }
   },
   "pull-request-title-pattern": "Release v${version}",
