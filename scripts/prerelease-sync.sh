@@ -420,7 +420,7 @@ fi
 # ---------------------------------------------------------------------------
 # The sync.
 # ---------------------------------------------------------------------------
-gate_check
+gate_check 1
 
 original_branch="$(git -C "${REPO_ROOT}" symbolic-ref --short HEAD)"
 before_next="$(git -C "${REPO_ROOT}" rev-parse "${PREVIEW_BRANCH}")"
