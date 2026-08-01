@@ -61,7 +61,7 @@ name: release-please
 #
 # `main` is the TRUNK: work lands there and STABLE releases are cut there.
 # `next` is a permanent DOWNSTREAM PREVIEW lane. It only ever RECEIVES merges
-# from main (`bash scripts/prerelease-sync.sh` in the workspace repo) and it
+# from main (this repo's own `bash scripts/prerelease-sync.sh`) and it
 # cuts RELEASE CANDIDATES — v0.1.0-rc1, v0.1.0-rc2. It never merges back, so
 # the two branches are never meant to converge and their manifests are SUPPOSED
 # to diverge. Do not "tidy up" `next` by resetting it to main.
